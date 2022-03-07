@@ -1,9 +1,15 @@
 locals {
-  queries  = { for q in fileset(var.lacework_content_path, "queries/**/*.json") : jsondecode(file("${var.lacework_content_path}/${q}")).queryId => jsondecode(file("${var.lacework_content_path}/${q}")).queryText }
-  policies = { for p in fileset(var.lacework_content_path, "policies/**/*.json") : jsondecode(file("${var.lacework_content_path}/${p}")).policyId => jsondecode(file("${var.lacework_content_path}/${p}")) }
-
+  file_ext = var.format == "json" ? var.format : "y*ml"
+  queries  = { for q in fileset(var.lacework_content_path, "queries/**/*.${local.file_ext}") : "${var.format == "json" ? jsondecode(file("${var.lacework_content_path}/${q}")).queryId : yamldecode(file("${var.lacework_content_path}/${q}")).queryId}" => "${var.format == "json" ? jsondecode(file("${var.lacework_content_path}/${q}")).queryText : yamldecode(file("${var.lacework_content_path}/${q}")).queryText}" }
+  policies = { for p in fileset(var.lacework_content_path, "policies/**/*.${local.file_ext}") : "${var.format == "json" ? jsondecode(file("${var.lacework_content_path}/${p}")).policyId : yamldecode(file("${var.lacework_content_path}/${p}")).policyId}" => "${var.format == "json" ? jsondecode(file("${var.lacework_content_path}/${p}")) : yamldecode(file("${var.lacework_content_path}/${p}"))}" }
+}
+output "queries" {
+  value = local.queries
 }
 
+output "policies" {
+  value = local.policies
+}
 resource "lacework_query" "main" {
   for_each = local.queries
 
