@@ -1,6 +1,6 @@
 locals {
-  queries  = { for q in fileset(var.lacework-content, "queries/**/*.json") : jsondecode(file("${var.lacework-content}/${q}")).queryId => jsondecode(file("${var.lacework-content}/${q}")).queryText }
-  policies = { for p in fileset(var.lacework-content, "policies/**/*.json") : jsondecode(file("${var.lacework-content}/${p}")).policyId => jsondecode(file("${var.lacework-content}/${p}")) }
+  queries  = { for q in fileset(var.lacework_content_path, "queries/**/*.json") : jsondecode(file("${var.lacework_content_path}/${q}")).queryId => jsondecode(file("${var.lacework_content_path}/${q}")).queryText }
+  policies = { for p in fileset(var.lacework_content_path, "policies/**/*.json") : jsondecode(file("${var.lacework_content_path}/${p}")).policyId => jsondecode(file("${var.lacework_content_path}/${p}")) }
 
 }
 
